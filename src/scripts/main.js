@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    let worker = new Worker('src/scripts/timerWorker.js');
+    const worker = new Worker('src/scripts/timerWorker.js');
     let isWorkTime = true;
     let isRunning = false;
     let workCycle = 1;
@@ -74,6 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 worker.postMessage({ command: 'start', duration: breakDuration });
             }
         }
+    };
+    worker.onerror = function(error) {
+        console.error('Worker error:', error);
     };
     
 
