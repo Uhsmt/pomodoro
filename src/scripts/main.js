@@ -39,17 +39,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    let worker = new Worker('scripts/timerWorker.js');
+    let worker = new Worker('src/scripts/timerWorker.js');
     let isWorkTime = true;
     let isRunning = false;
     let workCycle = 1;
+    let remainingTime = 0;
 
     // Initialize the timer display with default values
     updateTimer(workDurationMinutesInput.value * 60);
     
     worker.onmessage = function(e) {
         if (e.data.command === 'tick') {
-            updateTimer(e.data.time);
+            remainingTime = e.data.remainingTime; // 残り時間を更新
+            if ( e.data.time){
+                updateTimer(e.data.time);
+            }
         } else if (e.data.command === 'end') {
             alarmSound.play();
             isWorkTime = !isWorkTime;
@@ -85,11 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     stopButton.addEventListener('click', () => {
-        // タイマー再生中でなければ、反応しない
-        if (!isRunning) {
-            return;
-        }
-
         clickSound.play();  // クリック音を再生
         if (isRunning) {
             worker.postMessage({ command: 'stop' });
