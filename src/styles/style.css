@@ -86,3 +86,8 @@ button {
 button:hover {
     background-color: #33ccff; /* ホバー時に少し明るくなる */
 }
+
+button:disabled {
+    background-color: #666666; /* 無効時はグレーに変更 */
+    cursor: not-allowed;
+}

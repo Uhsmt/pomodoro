@@ -9,6 +9,7 @@ self.onmessage = function(e) {
         timerInterval = setInterval(() => {
             timeRemaining -= 1;
             if (timeRemaining <= 0) {
+                console.log('Timer ended');
                 clearInterval(timerInterval);
                 self.postMessage({ command: 'end' });
             } else {

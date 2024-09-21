@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isWorkTime = true;
     let isRunning = false;
     let workCycle = 1;
-    let remainingTime = 0;
+    let remainingTime = workDurationMinutesInput.value * 60;
 
     // Initialize the timer display with default values
     updateTimer(workDurationMinutesInput.value * 60);
@@ -83,8 +83,15 @@ document.addEventListener('DOMContentLoaded', function() {
             isRunning = true;
             worker.postMessage({
                 command: 'start',
-                duration: isWorkTime ? workDurationMinutesInput.value * 60 : breakDurationMinutesInput.value * 60
+                duration: remainingTime
             });
+            statusElement.textContent = isWorkTime ? 'Status: Work Time' : 'Status: Break Time';
+            if (!isWorkTime) {
+                waveSound.volume = 1;
+                waveSound.play();
+            }
+            startButton.setAttribute('disabled', 'disabled');
+            stopButton.removeAttribute('disabled');
         }
     });
     
@@ -95,18 +102,8 @@ document.addEventListener('DOMContentLoaded', function() {
             isRunning = false;
             statusElement.textContent = 'Status: Stopped';
             fadeOutAudio(waveSound);
-        } else {
-            isRunning = true;
-            worker.postMessage({ command: 'start' }); // 再開時には新しいdurationは送らない
-            
-            // 再開時にステータスを更新
-            statusElement.textContent = isWorkTime ? 'Status: Work Time' : 'Status: Break Time';
-    
-            // 再開時に波の音を再生
-            if (!isWorkTime) {
-                waveSound.volume = 1;
-                waveSound.play();
-            }
+            stopButton.setAttribute('disabled', 'disabled');
+            startButton.removeAttribute('disabled');
         }
     });
     
@@ -119,6 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('work-cycle').textContent = `Work Cycle: ${workCycle}`;
         statusElement.textContent = 'Status: Work Time';
         fadeOutAudio(waveSound);
+        stopButton.setAttribute('disabled', 'disabled');
+        startButton.removeAttribute('disabled');
     });
 
 
